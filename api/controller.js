@@ -22,15 +22,16 @@ const controllers = {
     },
     createExercise: (req, res) => {
         const body = req.body
-        // Is id valid
-        if (!mongoose.Types.ObjectId.isValid(body[':_id'])){
+        console.log(JSON.stringify(body))
+        console.log(JSON.stringify(req.params))
+        if (!mongoose.Types.ObjectId.isValid(req.params._id)){
             res.send(
                 'ID is invalid, see <a href="https://docs.mongodb.com/manual/reference/method/ObjectId">mongodb</a> for more info'
             )
             return;
         }
         /* checking if id belongs to known user */
-        User.findById(body[':_id'], (err, user) => {
+        User.findById(req.params._id, (err, user) => {
             if (err) {
                 return res.json(err)
             }
@@ -44,11 +45,13 @@ const controllers = {
             if (body.duration === ""){
                 return res.send('Duration required')
             }
+
+            let date = Date.parse(body.date) ? new Date(body.date) : new Date()
             const exerciseData = {
-                _uid: body[':_id'],
+                _uid: req.params._id,
                 description: body.description,
                 duration: body.duration,
-                date:  body.date ? new Date(body.date) : new Date()
+                date: date
             }
             if (exerciseData.date == "Invalid Date")
                 return res.send('Cast to date failed')
@@ -56,11 +59,10 @@ const controllers = {
             exercise.save( (err, data) => {
                 if (err)
                     return res.json(err)
-                const formattedDate = `${weekdays[data.date.getDay()]} ${months[data.date.getMonth()]} ${data.date.getUTCDate()} ${data.date.getFullYear()}`
                 res.json({
                     _id: user._id,
                     username: user.username,
-                    date: formattedDate,
+                    date: data.date.toString().slice(0,15),
                     duration: data.duration,
                     description: data.description
                 })
