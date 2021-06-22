@@ -2,10 +2,6 @@ const User = require('../models/user')
 const Exercise = require('../models/exercise')
 const mongoose = require('mongoose')
 
-const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
 const controllers = {
     createUser: (req, res) => {
         const userData = {
